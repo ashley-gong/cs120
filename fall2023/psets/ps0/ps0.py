@@ -11,7 +11,8 @@
 class BinaryTree:
     def __init__(self, root):
         self.root: BTvertex = root
- 
+
+
 class BTvertex:
     def __init__(self, key):
         self.parent: BTvertex = None
@@ -20,9 +21,11 @@ class BTvertex:
         self.key: int = key
         self.size: int = None
 
+
 #
 # Problem 1a
 #
+
 
 # Input: BTvertex v, the root of a BinaryTree of size n
 # Output: Up to you
@@ -40,18 +43,32 @@ def calculate_sizes(v):
         v.size += calculate_sizes(v.left)
     if v.right:
         v.size += calculate_sizes(v.right)
-    
+
     return v.size
+
 
 #
 # Problem 1c
 #
+
 
 # Input: BTvertex r, the root of a size-augmented BinaryTree T
 # ... of size n and height h
 # Output: A BTvertex that, if removed from the tree, would result
 # ... in disjoint trees that all have at most n/2 vertices
 # Runtime: O(h)
-def find_vertex(r): 
-    # Your code goes here
-    pass
+def find_vertex(r):
+    total = r.size
+    while r:
+        left, right = None, None
+        if r.left:
+            left = r.left.size
+        if r.right:
+            right = r.right.size
+        if left and left > total // 2:
+            r = r.left
+        elif right and right > total // 2:
+            r = r.right
+        else:
+            return r
+    return r
