@@ -95,9 +95,7 @@ def radixSort(univsize, base, arr):
         keys2 = [0] * n
         for i in range(n):
             keys2[i] = values2[i][j]
-
-        # Generate list with values2 (V') to call counting sort on
-        for i in range(n):
+            # Generate list with values2 (V') to call counting sort on
             toSort[i] = (keys2[i], arr[i][1], values2[i])
         toSort = countSort(base, toSort)
 
@@ -113,4 +111,4 @@ def radixSort(univsize, base, arr):
     return ans
 
 
-print(radixSort(100, 10, [(10, 1), (12, 1), (33, 1), (21, 1), (15, 1), (61, 1)]))
+# print(radixSort(100, 10, [(10, 1), (12, 1), (33, 1), (21, 1), (15, 1), (61, 1)]))
