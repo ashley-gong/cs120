@@ -104,8 +104,13 @@ def radixSort(univsize, base, arr):
     ans = []
     for i in range(n):
         key = 0
+        baseFactor = 1
         for j in range(k):
-            key += toSort[i][2][j] * (base**j)
+            key += toSort[i][2][j] * baseFactor
+            baseFactor *= base
         ans.append((key, toSort[i][1]))
 
     return ans
+
+
+print(radixSort(100, 10, [(10, 1), (12, 1), (33, 1), (21, 1), (15, 1), (61, 1)]))
