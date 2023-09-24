@@ -54,7 +54,7 @@ class BinarySearchTree:
     returns BinarySearchTree/Node or None
     """
 
-    # error -> traversing on the right subtree and failing to change index (since only checking left)
+    # Error -> traversing on the right subtree and failing to change index (since only checking left)
     def select(self, ind):
         left_size = 0
         if self.left is not None:
@@ -94,7 +94,7 @@ class BinarySearchTree:
     returns the original (top level) tree - allows for easy chaining in tests
     """
 
-    # too slow -> O(n) instead of O(h)
+    # Too slow -> O(n) instead of O(h)
     # self.calculate_sizes is O(n) with recursive implementation, but only need
     # to update subtree size when traversing down to find where to place node
     def insert(self, key):
@@ -139,7 +139,16 @@ class BinarySearchTree:
     """
 
     def rotate(self, direction, child_side):
-        # Your code goes here
+        if child_side == "R" and direction == "L":
+            tree_child = self.right
+            self.right = tree_child.right
+            tree_child.right = self.right.left
+            self.right.left = tree_child
+        if child_side == "L" and direction == "R":
+            tree_child = self.left
+            self.left = tree_child.left
+            tree_child.left = self.left.right
+            self.left.right = tree_child
         return self
 
     def print_bst(self):
