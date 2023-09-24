@@ -39,12 +39,12 @@ class BinarySearchTree:
         if debugger:
             debugger.inc()
 
-        # Implementation - only increment nodes visited in search traversal to insert
-        self.size += 1
-        # if self.right is not None:
-        #     self.size += self.right.calculate_sizes(debugger)
-        # if self.left is not None:
-        #     self.size += self.left.calculate_sizes(debugger)
+        # Implementation
+        # self.size += 1
+        if self.right is not None:
+            self.size += self.right.calculate_sizes(debugger)
+        if self.left is not None:
+            self.size += self.left.calculate_sizes(debugger)
         return self.size
 
     """
@@ -97,19 +97,21 @@ class BinarySearchTree:
     # Too slow -> O(n) instead of O(h)
     # self.calculate_sizes is O(n) with recursive implementation, but only need
     # to update subtree size when traversing down to find where to place node
+    # for calc_sizes, only increment nodes visited in search traversal to insert
     def insert(self, key):
         # print(self.key)
         if self.key is None:
             self.key = key
-        elif self.key > key:
+        else:
+            # Increment size of a node visited in search traversal to insert
+            self.size += 1
+        if self.key > key:
             if self.left is None:
                 self.left = BinarySearchTree(self.debugger)
-            self.calculate_sizes()
             self.left.insert(key)
         elif self.key < key:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
-            self.calculate_sizes()
             self.right.insert(key)
         # self.calculate_sizes()  # this is O(n) in current implementation
         return self
@@ -138,17 +140,63 @@ class BinarySearchTree:
        11 
     """
 
+    def getDir(self, node, direction, op):
+        if direction == "R":
+            if op:
+                return node.left
+            return node.right
+        if direction == "L":
+            if op:
+                return node.right
+            return node.left
+
+    # O(1) to rearrange parent pointers
+    # how to main size augmentation invariant
     def rotate(self, direction, child_side):
         if child_side == "R" and direction == "L":
-            tree_child = self.right
-            self.right = tree_child.right
+            tree_child = self.right  # equal to child_side
+            self.right = tree_child.right  # self.child_side -> tree_child.dirOPP
+            tree_child.right = self.right.left  # TC.dirOPP -> self.dirOpp.dir
+            self.right.left = tree_child  # self.child_side.dir -> TC
+        if child_side == "L" and direction == "L":
+            tree_child = self.left
+            self.left = tree_child.right
             tree_child.right = self.right.left
-            self.right.left = tree_child
+            self.left.left = tree_child
+
         if child_side == "L" and direction == "R":
             tree_child = self.left
             self.left = tree_child.left
             tree_child.left = self.left.right
             self.left.right = tree_child
+        if child_side == "R" and direction == "R":
+            tree_child = self.right
+            self.right = tree_child.left
+            tree_child.left = self.left.right
+            self.right.right = tree_child
+
+        # tree_child = self.right if child_side == "R" else self.left
+        # tc_dirOp = self.getDir(tree_child, direction, True)
+        # if child_side == "R":
+        #     self.right = tc_dirOp
+        # if child_side == "L":
+        #     self.left = tc_dirOp
+        # tc_dirOp =
+
+        # if child_side == "R":
+        #     tree_child = self.right
+        # if child_side == "L":
+        #     tree_child = self.left
+
+        # if direction == "L":
+        #     self.right = tree_child.right
+        #     tree_child.right = self.right.left
+        #     self.right.left = tree_child
+        # if direction == "R":
+        #     self.left = tree_child.left
+        #     tree_child.left = self.left.right
+        #     self.left.right = tree_child
+
         return self
 
     def print_bst(self):
