@@ -39,12 +39,12 @@ class BinarySearchTree:
         if debugger:
             debugger.inc()
 
-        # Implementation
-        self.size = 1
-        if self.right is not None:
-            self.size += self.right.calculate_sizes(debugger)
-        if self.left is not None:
-            self.size += self.left.calculate_sizes(debugger)
+        # Implementation - only increment nodes visited in search traversal to insert
+        self.size += 1
+        # if self.right is not None:
+        #     self.size += self.right.calculate_sizes(debugger)
+        # if self.left is not None:
+        #     self.size += self.left.calculate_sizes(debugger)
         return self.size
 
     """
@@ -94,19 +94,24 @@ class BinarySearchTree:
     returns the original (top level) tree - allows for easy chaining in tests
     """
 
-    # too slow i think
+    # too slow -> O(n) instead of O(h)
+    # self.calculate_sizes is O(n) with recursive implementation, but only need
+    # to update subtree size when traversing down to find where to place node
     def insert(self, key):
+        # print(self.key)
         if self.key is None:
             self.key = key
         elif self.key > key:
             if self.left is None:
                 self.left = BinarySearchTree(self.debugger)
+            self.calculate_sizes()
             self.left.insert(key)
         elif self.key < key:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
+            self.calculate_sizes()
             self.right.insert(key)
-        self.calculate_sizes()
+        # self.calculate_sizes()  # this is O(n) in current implementation
         return self
 
     ####### Part b #######
