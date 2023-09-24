@@ -151,51 +151,54 @@ class BinarySearchTree:
             return node.left
 
     # O(1) to rearrange parent pointers
-    # how to main size augmentation invariant
+    # how to main size augmentation invariant?
     def rotate(self, direction, child_side):
         if child_side == "R" and direction == "L":
             tree_child = self.right  # equal to child_side
+            x = self.right.size
             self.right = tree_child.right  # self.child_side -> tree_child.dirOPP
+            y = tree_child.right.size
             tree_child.right = self.right.left  # TC.dirOPP -> self.dirOpp.dir
+            # print(tree_child.size)
             self.right.left = tree_child  # self.child_side.dir -> TC
+            self.right.size = x
+            tree_child.size = y
+            print(self.right.size)
+            print(tree_child.size)
         if child_side == "L" and direction == "L":
             tree_child = self.left
+            x = self.left.size
             self.left = tree_child.right
+            y = tree_child.right.size
             tree_child.right = self.right.left
             self.left.left = tree_child
+            self.left.size = x
+            tree_child.size = y
 
         if child_side == "L" and direction == "R":
             tree_child = self.left
+            x = self.left.size
+            # print(self.right.size)
+            # print(tree_child.size)
             self.left = tree_child.left
+            y = tree_child.left.size
             tree_child.left = self.left.right
             self.left.right = tree_child
+            self.left.size = x
+            tree_child.size = y
+            # print(self.right.size)
+            print(tree_child.size)
         if child_side == "R" and direction == "R":
             tree_child = self.right
+            x = self.right.size
             self.right = tree_child.left
+            y = tree_child.left.size
             tree_child.left = self.left.right
             self.right.right = tree_child
-
-        # tree_child = self.right if child_side == "R" else self.left
-        # tc_dirOp = self.getDir(tree_child, direction, True)
-        # if child_side == "R":
-        #     self.right = tc_dirOp
-        # if child_side == "L":
-        #     self.left = tc_dirOp
-        # tc_dirOp =
-
-        # if child_side == "R":
-        #     tree_child = self.right
-        # if child_side == "L":
-        #     tree_child = self.left
-
-        # if direction == "L":
-        #     self.right = tree_child.right
-        #     tree_child.right = self.right.left
-        #     self.right.left = tree_child
-        # if direction == "R":
-        #     self.left = tree_child.left
-        #     tree_child.left = self.left.right
-        #     self.left.right = tree_child
+            self.right.size = x
+            tree_child.size = y
+            print(self.right.size)
+            print(tree_child.size)
 
         return self
 
