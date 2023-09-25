@@ -154,52 +154,69 @@ class BinarySearchTree:
     # how to main size augmentation invariant?
     def rotate(self, direction, child_side):
         if child_side == "R" and direction == "L":
+            print("d: l, c: r")
             tree_child = self.right  # equal to child_side
-            x = self.right.size
             self.right = tree_child.right  # self.child_side -> tree_child.dirOPP
-            y = tree_child.right.size
+            if tree_child.right:
+                tree_child.size -= self.right.size
             tree_child.right = self.right.left  # TC.dirOPP -> self.dirOpp.dir
-            # print(tree_child.size)
+            if tree_child.right:
+                tree_child.size += tree_child.right.size
+            if self.right.left:
+                self.right.size -= self.right.left.size
             self.right.left = tree_child  # self.child_side.dir -> TC
-            self.right.size = x
-            tree_child.size = y
-            print(self.right.size)
-            print(tree_child.size)
-        if child_side == "L" and direction == "L":
-            tree_child = self.left
-            x = self.left.size
-            self.left = tree_child.right
-            y = tree_child.right.size
-            tree_child.right = self.right.left
-            self.left.left = tree_child
-            self.left.size = x
-            tree_child.size = y
-
-        if child_side == "L" and direction == "R":
-            tree_child = self.left
-            x = self.left.size
+            if self.right.left:
+                self.right.size += self.right.left.size
             # print(self.right.size)
             # print(tree_child.size)
-            self.left = tree_child.left
-            y = tree_child.left.size
-            tree_child.left = self.left.right
-            self.left.right = tree_child
-            self.left.size = x
-            tree_child.size = y
-            # print(self.right.size)
-            print(tree_child.size)
-        if child_side == "R" and direction == "R":
-            tree_child = self.right
-            x = self.right.size
-            self.right = tree_child.left
-            y = tree_child.left.size
-            tree_child.left = self.left.right
-            self.right.right = tree_child
-            self.right.size = x
-            tree_child.size = y
-            print(self.right.size)
-            print(tree_child.size)
 
+        if child_side == "L" and direction == "L":
+            print("d: l, c: l")
+            tree_child = self.left
+            self.left = tree_child.right
+            if tree_child.right:
+                tree_child.size -= self.left.size
+            tree_child.right = self.right.left
+            if tree_child.right:
+                tree_child.size += tree_child.right.size
+            if self.left.left:
+                self.left.size -= self.left.left.size
+            self.left.left = tree_child
+            if self.left.left:
+                self.left.size += self.left.left.size
+            # print(tree_child.size)
+        if child_side == "L" and direction == "R":
+            print("d: r, c: l")
+            tree_child = self.left
+            self.left = tree_child.left
+            if tree_child.left:
+                tree_child.size -= self.left.size
+            tree_child.left = self.left.right
+            if tree_child.left:
+                tree_child.size += tree_child.left.size
+            if self.left.right:
+                self.left.size -= self.left.right.size
+            self.left.right = tree_child
+            if self.left.right:
+                self.left.size += self.left.right.size
+            # print(tree_child.size)
+        if child_side == "R" and direction == "R":
+            print("d: r, c: r")
+            tree_child = self.right
+            self.right = tree_child.left
+            if tree_child.left:
+                tree_child.size -= self.right.size
+            tree_child.left = self.left.right
+            if tree_child.left:
+                tree_child.size += tree_child.left.size
+            if self.right.right:
+                self.right.size -= self.right.right.size
+            self.right.right = tree_child
+            if self.right.right:
+                self.right.size += self.right.right.size
+            # print(tree_child.size)
+
+        print("end of function")
         return self
 
     def print_bst(self):
