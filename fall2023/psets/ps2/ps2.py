@@ -140,16 +140,6 @@ class BinarySearchTree:
        11 
     """
 
-    def getDir(self, node, direction, op):
-        if direction == "R":
-            if op:
-                return node.left
-            return node.right
-        if direction == "L":
-            if op:
-                return node.right
-            return node.left
-
     # O(1) to rearrange parent pointers
     # how to main size augmentation invariant?
     def rotate(self, direction, child_side):
