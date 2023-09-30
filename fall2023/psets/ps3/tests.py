@@ -107,6 +107,8 @@ mult = [
     ["write", output_ptr_id, 3],
 ]
 
+# TODO: if time, try fibonacci??
+
 
 def test():
     tests["Example 0: Unit Tests"] = [
