@@ -74,9 +74,9 @@ prog2 = [
 
 # Time a function call on a given input
 def time_fun(fn, input):
-    start_time = time.time()
+    start_time = time.process_time()
     fn(input)
-    end_time = time.time()
+    end_time = time.process_time()
     return end_time - start_time
 
 
