@@ -35,9 +35,7 @@ def QuickSelect(arr, i):
         return arr[0]
     p = get_random_index(arr)
     pKey = arr[p][0]
-    arrLess = []
-    arrEqual = []
-    arrGreater = []
+    arrLess, arrEqual, arrGreater = [], [], []
     for k, v in arr:
         if k < pKey:
             arrLess.append((k, v))
@@ -69,8 +67,11 @@ NOTE: This is different from the QuickSelect definition. This function takes in 
 def MergeSortSelect(arr, query_list):
     # Only call MergeSort once
     # ... MergeSort has already been implemented for you (see below)
-    pass
-    return [(0, -1)] * len(query_list)  # replace this line with your return
+    sortedArr = MergeSort(arr)
+    ans = []
+    for q in query_list:
+        ans.append(sortedArr[q])
+    return ans
 
 
 ##################################
