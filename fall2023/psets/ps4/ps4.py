@@ -52,6 +52,33 @@ def QuickSelect(arr, i):
         return arrEqual[0]
 
 
+def Medianof3QuickSelect(arr, i):
+    if len(arr) <= 1:
+        return arr[0]
+    # median-of-3 method
+    if len(arr) >= 3:
+        a = random.sample(arr, 3)
+        pKey = int(np.median([j[0] for j in a]))
+    else:
+        p = get_random_index(arr)
+        pKey = arr[p][0]
+    arrLess, arrEqual, arrGreater = [], [], []
+    for k, v in arr:
+        if k < pKey:
+            arrLess.append((k, v))
+        elif k > pKey:
+            arrGreater.append((k, v))
+        else:
+            arrEqual.append((k, v))
+    nLess, nEqual = len(arrLess), len(arrEqual)
+    if i < nLess:
+        return Medianof3QuickSelect(arrLess, i)
+    elif i >= nLess + nEqual:
+        return Medianof3QuickSelect(arrGreater, i - nLess - nEqual)
+    else:
+        return arrEqual[0]
+
+
 """
 Uses MergeSort to resolve a number of queries where each query is to find an key-value pair (Kj, Vj) such that Kj is an i’th smallest key.
 arr: a list of key-value pair tuples
@@ -66,7 +93,6 @@ NOTE: This is different from the QuickSelect definition. This function takes in 
 
 def MergeSortSelect(arr, query_list):
     # Only call MergeSort once
-    # ... MergeSort has already been implemented for you (see below)
     sortedArr = MergeSort(arr)
     ans = []
     for q in query_list:
@@ -83,11 +109,11 @@ def MergeSortSelect(arr, query_list):
 
 def experiments():
     # Edit this parameter
-    k = [1, 1, 1, 1, 1]
+    k = [25, 26, 27, 38, 30, 32]
 
     # Feel free to edit these initial parameters
 
-    RUNS = 20  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
+    RUNS = 50  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
     HEIGHT = 1.5  # Height of a chart
     WIDTH = 3  # Width of a chart
     # Determines if subcharts share the same axis scale/limits
@@ -131,7 +157,7 @@ def experiments():
                 ms_record.append(seconds * 1000)  # Convert seconds to milliseconds
                 algorithm_record.append("QuickSelect")
 
-            # MergeSort Runs
+            # MergeSort Runs - changed for median of 3 quickselect
             for _ in range(RUNS):
                 # Record Time Taken to Solve All Queries
                 start_time = time.time()
@@ -143,6 +169,19 @@ def experiments():
                 k_record.append(ki)
                 ms_record.append(seconds * 1000)  # Convert seconds to milliseconds
                 algorithm_record.append("MergeSort")
+
+            for _ in range(RUNS):
+                # Record Time Taken to Solve All Queries
+                start_time = time.time()
+                for q in queries:
+                    # Copy dataset just to be safe
+                    Medianof3QuickSelect(dataset_size_n.copy(), q)
+                seconds = time.time() - start_time
+                # Record this trial run
+                n_record.append(ni)
+                k_record.append(ki)
+                ms_record.append(seconds * 1000)  # Convert seconds to milliseconds
+                algorithm_record.append("Medianof3QuickSelect")
 
             # Print progress
             iter += 1
