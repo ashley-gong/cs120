@@ -58,7 +58,8 @@ def Medianof3QuickSelect(arr, i):
     # median-of-3 method
     if len(arr) >= 3:
         a = random.sample(arr, 3)
-        pKey = int(np.median([j[0] for j in a]))
+        a.sort()
+        pKey = a[1][0]
     else:
         p = get_random_index(arr)
         pKey = arr[p][0]
@@ -109,11 +110,11 @@ def MergeSortSelect(arr, query_list):
 
 def experiments():
     # Edit this parameter
-    k = [25, 26, 27, 38, 30, 32]
+    k = [25, 26, 27, 28, 29, 30]
 
     # Feel free to edit these initial parameters
 
-    RUNS = 50  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
+    RUNS = 30  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
     HEIGHT = 1.5  # Height of a chart
     WIDTH = 3  # Width of a chart
     # Determines if subcharts share the same axis scale/limits
@@ -170,6 +171,7 @@ def experiments():
                 ms_record.append(seconds * 1000)  # Convert seconds to milliseconds
                 algorithm_record.append("MergeSort")
 
+            # 1d QS runs
             for _ in range(RUNS):
                 # Record Time Taken to Solve All Queries
                 start_time = time.time()
