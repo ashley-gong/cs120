@@ -136,29 +136,27 @@ def bfs_2_coloring(G, precolored_nodes=None):
         if len(precolored_nodes) == G.N:
             return G.colors
 
-    # If there is no valid coloring, reset all the colors to None using G.reset_colors()
-    vertex_order = [0]
-    for i in range(G.N):
-        for neighbor in G.edges[i]:
-            if neighbor not in vertex_order:
-                vertex_order.append(neighbor)
+    while len(visited) < G.N:
+        unvisited = [i for i in range(G.N) if i not in visited]
+        vertex_order = [unvisited[0]]
+        for i in range(G.N):
+            for neighbor in G.edges[i]:
+                if neighbor not in vertex_order:
+                    vertex_order.append(neighbor)
 
-    color = False
-    for i in range(len(vertex_order)):
-        for j in range(i):
-            if vertex_order[i] in G.edges[vertex_order[j]]:
-                color = not bool(G.colors[vertex_order[j]])
-                break
-        G.colors[vertex_order[i]] = int(color)
-        visited.add(vertex_order[i])
-
-    for i in range(G.N):
-        if i not in visited:
-            G.colors[i] = 0
+        color = False
+        for i in range(len(vertex_order)):
+            for j in range(i):
+                if vertex_order[i] in G.edges[vertex_order[j]]:
+                    color = not bool(G.colors[vertex_order[j]])
+                    break
+            G.colors[vertex_order[i]] = int(color)
+            visited.add(vertex_order[i])
 
     if G.is_graph_coloring_valid():
         return G.colors
 
+    # If there is no valid coloring, reset all the colors to None using G.reset_colors()
     G.reset_colors()
     return None
 
@@ -171,8 +169,13 @@ def bfs_2_coloring(G, precolored_nodes=None):
 # Given an instance of the Graph class G and a subset of precolored nodes,
 # Checks if subset is an independent set in G
 def is_independent_set(G, subset):
-    # TODO: Complete this function
-
+    color = None
+    for v in subset:
+        if not color:
+            color = G.colors[v]
+        else:
+            if G.colors[v] != color:
+                return False
     return True
 
 
@@ -201,7 +204,13 @@ def is_independent_set(G, subset):
 # If successful, modifies G.colors and returns the coloring.
 # If no coloring is possible, resets all of G's colors to None and returns None.
 def iset_bfs_3_coloring(G):
-    # TODO: Complete this function.
+    V = [i for i in range(G.N)]
+    S = combinations(V, (G.N // 3) + 1)
+    for s in S:
+        if is_independent_set(G, s):
+            coloring = bfs_2_coloring(G, list(s))
+            if coloring:
+                return coloring
 
     G.reset_colors()
     return None
