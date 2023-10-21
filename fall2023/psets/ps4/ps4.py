@@ -20,26 +20,67 @@ random.seed(120)
 ####################
 
 
-'''
+"""
 A Las Vegas Algorithm to find a key-value pair (Ij, Kj) such that Kj is an i’th smallest key.
 arr: a list of key-value pair tuples
     e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)] 
     ... in this problem set, the values are irrelevant
 i: an integer [0, n-1] 
 returns: An key-value pair (Kj, Vj) such that Kj is an i’th smallest key.
-'''
+"""
 
 
 def QuickSelect(arr, i):
-    # Your code here
+    if len(arr) <= 1:
+        return arr[0]
+    p = get_random_index(arr)
+    pKey = arr[p][0]
+    arrLess, arrEqual, arrGreater = [], [], []
+    for k, v in arr:
+        if k < pKey:
+            arrLess.append((k, v))
+        elif k > pKey:
+            arrGreater.append((k, v))
+        else:
+            arrEqual.append((k, v))
+    nLess, nEqual = len(arrLess), len(arrEqual)
+    if i < nLess:
+        return QuickSelect(arrLess, i)
+    elif i >= nLess + nEqual:
+        return QuickSelect(arrGreater, i - nLess - nEqual)
+    else:
+        return arrEqual[0]
 
-    # Feel free to use get_random_index(arr) or get_random_int(start_inclusive, end_inclusive)
-    # ... see the helper functions below
-    pass
-    return (0, -1)
+
+def Medianof3QuickSelect(arr, i):
+    if len(arr) <= 1:
+        return arr[0]
+    # median-of-3 method
+    if len(arr) >= 3:
+        a = random.sample(arr, 3)
+        a.sort()
+        pKey = a[1][0]
+    else:
+        p = get_random_index(arr)
+        pKey = arr[p][0]
+    arrLess, arrEqual, arrGreater = [], [], []
+    for k, v in arr:
+        if k < pKey:
+            arrLess.append((k, v))
+        elif k > pKey:
+            arrGreater.append((k, v))
+        else:
+            arrEqual.append((k, v))
+    nLess, nEqual = len(arrLess), len(arrEqual)
+    if i < nLess:
+        return Medianof3QuickSelect(arrLess, i)
+    elif i >= nLess + nEqual:
+        return Medianof3QuickSelect(arrGreater, i - nLess - nEqual)
+    else:
+        return arrEqual[0]
 
 
-'''
+"""
 Uses MergeSort to resolve a number of queries where each query is to find an key-value pair (Kj, Vj) such that Kj is an i’th smallest key.
 arr: a list of key-value pair tuples
     e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)] 
@@ -48,14 +89,16 @@ query_list (aka i_arr): a list of integers [0, n-1]
 returns: An list of key-value pairs such that for each query qi, the i'th element in the returned list is (Kj, Vj) such that Kj is an i’th smallest key.
 NOTE: This is different from the QuickSelect definition. This function takes in a set of queries and returns a list corresponding to their results. 
     ... this is to properly benchmark for the experiments. We only want to run MergeSort once and then use that one result to resolve all queries.
-'''
+"""
 
 
 def MergeSortSelect(arr, query_list):
     # Only call MergeSort once
-    # ... MergeSort has already been implemented for you (see below)
-    pass
-    return [(0, -1)] * len(query_list)  # replace this line with your return
+    sortedArr = MergeSort(arr)
+    ans = []
+    for q in query_list:
+        ans.append(sortedArr[q])
+    return ans
 
 
 ##################################
@@ -67,13 +110,13 @@ def MergeSortSelect(arr, query_list):
 
 def experiments():
     # Edit this parameter
-    k = [1, 1, 1, 1, 1]
+    k = [25, 26, 27, 28, 29, 30]
 
     # Feel free to edit these initial parameters
 
-    RUNS = 20  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
+    RUNS = 30  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
     HEIGHT = 1.5  # Height of a chart
-    WIDTH = 3   # Width of a chart
+    WIDTH = 3  # Width of a chart
     # Determines if subcharts share the same axis scale/limits
     # ... since the trails cover a wide range, sharing the same scale/limits can cause some lines to be too small.
     SAME_AXIS_SCALE = False
@@ -83,9 +126,11 @@ def experiments():
 
     # The search space for our parameters
     # DO NOT EDIT these parameters for your final figure
-    n = [2 ** i for i in range(10, 16)]
+    n = [2**i for i in range(10, 16)]
     # Our deterministically generated dataset
-    fixed_dataset = sorted([(0, K) for K in range(max(n))], key=lambda T: T[1], reverse=True)
+    fixed_dataset = sorted(
+        [(0, K) for K in range(max(n))], key=lambda T: T[1], reverse=True
+    )
 
     # Records we will use to create the Pandas DataFrame
     n_record = []
@@ -113,7 +158,7 @@ def experiments():
                 ms_record.append(seconds * 1000)  # Convert seconds to milliseconds
                 algorithm_record.append("QuickSelect")
 
-            # MergeSort Runs
+            # MergeSort Runs - changed for median of 3 quickselect
             for _ in range(RUNS):
                 # Record Time Taken to Solve All Queries
                 start_time = time.time()
@@ -126,18 +171,34 @@ def experiments():
                 ms_record.append(seconds * 1000)  # Convert seconds to milliseconds
                 algorithm_record.append("MergeSort")
 
+            # 1d QS runs
+            for _ in range(RUNS):
+                # Record Time Taken to Solve All Queries
+                start_time = time.time()
+                for q in queries:
+                    # Copy dataset just to be safe
+                    Medianof3QuickSelect(dataset_size_n.copy(), q)
+                seconds = time.time() - start_time
+                # Record this trial run
+                n_record.append(ni)
+                k_record.append(ki)
+                ms_record.append(seconds * 1000)  # Convert seconds to milliseconds
+                algorithm_record.append("Medianof3QuickSelect")
+
             # Print progress
             iter += 1
             print("{} of {} Trials Completed".format(iter, len(n) * len(k)))
 
     # Create Pandas DataFrame
     data_field_title = "Runtime for {} Runs (ms)".format(RUNS)
-    df = pd.DataFrame({
-        "N": n_record,
-        "K": k_record,
-        data_field_title: ms_record,
-        "Algorithm": algorithm_record
-    })
+    df = pd.DataFrame(
+        {
+            "N": n_record,
+            "K": k_record,
+            data_field_title: ms_record,
+            "Algorithm": algorithm_record,
+        }
+    )
     plot(df, HEIGHT, WIDTH, SAME_AXIS_SCALE, data_field_title)
 
 
@@ -146,8 +207,16 @@ def plot(df, height, width, SAME_AXIS_SCALE, data_field_title):
     # ... Establish Rows by N
     # ... Establish Columns by K
     # ... Establish Lines by Algorithm
-    g = sns.FacetGrid(df, row="N", col="K", hue="Algorithm", height=height, aspect=width / height,
-                      sharex=SAME_AXIS_SCALE, sharey=SAME_AXIS_SCALE)
+    g = sns.FacetGrid(
+        df,
+        row="N",
+        col="K",
+        hue="Algorithm",
+        height=height,
+        aspect=width / height,
+        sharex=SAME_AXIS_SCALE,
+        sharey=SAME_AXIS_SCALE,
+    )
     # Plot the runtime value
     g.map(sns.kdeplot, data_field_title)
     g.add_legend()
@@ -160,11 +229,13 @@ def plot(df, height, width, SAME_AXIS_SCALE, data_field_title):
 #                  #
 ####################
 
+
 def run():
     experiments()
 
 
 # Feel free to use these function or code your own (as long as it is random)
+
 
 # A small helper function to return a random integer
 def get_random_int(start_inclusive, end_inclusive):
@@ -189,6 +260,7 @@ def get_random_index(arr):
 # You Do NOT Need to Modify Anything Below This Line
 #
 
+
 def merge(arr1, arr2):
     sortedArr = []
 
@@ -211,12 +283,12 @@ def merge(arr1, arr2):
     return sortedArr
 
 
-'''
+"""
 A deterministic sorting algorithm
 arr: a list of Key-Value pair tuples
     e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)] 
 returns: a sorted list, sorted according to keys
-'''
+"""
 
 
 def MergeSort(arr):

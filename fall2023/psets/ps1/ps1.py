@@ -39,16 +39,18 @@ def merge(arr1, arr2):
 
     return sortedArr
 
+
 def mergeSort(arr):
     if len(arr) < 2:
         return arr
 
-    midpt = int(math.ceil(len(arr)/2))
+    midpt = int(math.ceil(len(arr) / 2))
 
     half1 = mergeSort(arr[0:midpt])
     half2 = mergeSort(arr[midpt:])
 
     return merge(half1, half2)
+
 
 def countSort(univsize, arr):
     universe = []
@@ -65,6 +67,7 @@ def countSort(univsize, arr):
 
     return sortedArr
 
+
 def BC(n, b, k):
     if b < 2:
         raise ValueError()
@@ -76,6 +79,36 @@ def BC(n, b, k):
         raise ValueError()
     return digits
 
+
 def radixSort(univsize, base, arr):
-    """TODO: Implement Radix Sort using BC and countSort"""
-    return [] 
+    # Following pseudocode
+    k = math.ceil(math.log(univsize, base))
+    n = len(arr)
+    values2 = [None] * n
+    for i in range(n):
+        values2[i] = BC(arr[i][0], base, k)
+
+    toSort = [None] * n
+    for i in range(n):
+        toSort[i] = (arr[i][0], arr[i][1], values2[i])
+    for j in range(k):
+        keys2 = [0] * n
+        for i in range(n):
+            keys2[i] = values2[i][j]
+            # Generate list with values2 (V') to call counting sort on
+            toSort[i] = (keys2[i], arr[i][1], values2[i])
+        toSort = countSort(base, toSort)
+
+    ans = []
+    for i in range(n):
+        key = 0
+        baseFactor = 1
+        for j in range(k):
+            key += toSort[i][2][j] * baseFactor
+            baseFactor *= base
+        ans.append((key, toSort[i][1]))
+
+    return ans
+
+
+# print(radixSort(100, 10, [(10, 1), (12, 1), (33, 1), (21, 1), (15, 1), (61, 1)]))
